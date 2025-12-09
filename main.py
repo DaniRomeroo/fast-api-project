@@ -198,7 +198,6 @@ async def read_admin():
         return HTMLResponse("<h1>Error: admin.html not found in static folder</h1>", status_code=404)
     return FileResponse(file_path)
 
-
 # Sample UI
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
