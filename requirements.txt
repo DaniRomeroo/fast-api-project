@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+motor
+dnspython
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt==3.2.2
+python-multipart
+dotenv
+certifi
+####
+pandas
+tenacity
