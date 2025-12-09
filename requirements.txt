@@ -11,3 +11,4 @@ certifi
 ####
 pandas
 tenacity
+requests

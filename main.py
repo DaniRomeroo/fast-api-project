@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException, status
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from datetime import timedelta
 from motor.motor_asyncio import AsyncIOMotorClient
 from contextlib import asynccontextmanager
@@ -10,7 +11,7 @@ from logging_config import setup_logging
 import logging
 import certifi
 import twelvedata_etl
-
+import os
 
 # LIFECYCLE EVENTS
 
@@ -58,6 +59,8 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
     allow_headers=["*"],  # Allows all headers
 )
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # PUBLIC ROUTES
 
@@ -135,7 +138,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     }
 
 @app.post("/auth/logout", response_model=schemas.LogoutResponse)
-async def logout(request: schemas.LogoutRequest):
+async def logout(request: schemas.LogoutRequest, current_user: dict = Depends(auth.get_current_user)):
     """
     Logout endpoint: invalidates the given access token.
     """
@@ -173,13 +176,9 @@ async def get_system_status(current_user: dict = Depends(auth.get_current_user))
     }
 
 @app.get("/users", response_model=schemas.UserResponse)
-async def get_all_users(db = Depends(database.get_db)):
-    """
-    Get details of all registered users.
-    """
+async def get_all_users(db=Depends(database.get_db)):
     users_cursor = db["users"].find({})
-    users = await users_cursor.to_list(length=20)
-
+    users = await users_cursor.to_list(length=50)
     filtered_users = [
         {
             "_id": str(user["_id"]),
@@ -190,8 +189,15 @@ async def get_all_users(db = Depends(database.get_db)):
             "is_active": user["is_active"]
         } for user in users
     ]
-
     return JSONResponse(content=filtered_users)
+
+@app.get("/admin")
+async def read_admin():
+    file_path = os.path.join("static", "admin.html")
+    if not os.path.exists(file_path):
+        return HTMLResponse("<h1>Error: admin.html not found in static folder</h1>", status_code=404)
+    return FileResponse(file_path)
+
 
 # Sample UI
 @app.get("/", response_class=HTMLResponse)
