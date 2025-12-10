@@ -263,9 +263,11 @@
                     body: JSON.stringify({ token })
                 });
                 token = null;
-                localStorage.removeItem('access_token');
                 log('> Logged out.');
                 updateUI();
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('user_id');
+                localStorage.removeItem('role');
             } catch (error) {
                 log("> Logout error.");
             }

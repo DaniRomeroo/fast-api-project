@@ -138,7 +138,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     }
 
 @app.post("/auth/logout", response_model=schemas.LogoutResponse)
-async def logout(request: schemas.LogoutRequest, current_user: dict = Depends(auth.get_current_user)):
+async def logout(request: schemas.LogoutRequest):
     """
     Logout endpoint: invalidates the given access token.
     """
@@ -215,7 +215,7 @@ async def read_root():
 @app.post("/etl/twelvedata/run")
 async def run_twelvedata():
     results = await twelvedata_etl.run_etl()
-    return {"inserted_records": len(results)}
+    return len(results)
 
 @app.get("/etl/twelvedata/results")
 async def get_twelvedata_results():

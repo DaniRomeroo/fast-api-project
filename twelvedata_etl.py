@@ -11,6 +11,10 @@ TWELVE_DATA_URL = "https://api.twelvedata.com/time_series"
 
 SYMBOLS = [
     "AAPL",      # Apple Inc.
+]
+
+SYMBOLS_1 = [
+    "AAPL",      # Apple Inc.
     "MSFT",      # Microsoft Corporation
     "GOOGL",     # Alphabet Inc. (Google)
     "AMZN",      # Amazon.com, Inc.
