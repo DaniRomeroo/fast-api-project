@@ -12,6 +12,7 @@ import logging
 import certifi
 import twelvedata_etl
 import os
+import datetime
 
 # LIFECYCLE EVENTS
 
@@ -191,11 +192,44 @@ async def get_all_users(db=Depends(database.get_db)):
     ]
     return JSONResponse(content=filtered_users)
 
+@app.delete("/users/{user_id}")
+async def delete_user(
+    user_id: str,
+    current_user: dict = Depends(auth.get_current_user),
+    db=Depends(database.get_db)
+):
+    try:
+        user_oid = ObjectId(user_id)  # Convertimos a ObjectId
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid user ID")
+    
+    user = await db["users"].find_one({"_id": user_oid})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Soft delete
+    deletion_timestamp = datetime.utcnow()
+    await db["users"].update_one({"_id": user_oid}, {"$set": {"deleted_at": deletion_timestamp}})
+
+    return {
+        "code": 200,
+        "message": "User deleted successfully",
+        "deleted_at": deletion_timestamp.isoformat()
+    }
+
+
 @app.get("/admin")
-async def read_admin():
+async def load_admin():
     file_path = os.path.join("static", "admin.html")
     if not os.path.exists(file_path):
         return HTMLResponse("<h1>Error: admin.html not found in static folder</h1>", status_code=404)
+    return FileResponse(file_path)
+
+@app.get("/user")
+async def load_user():
+    file_path = os.path.join("static", "user.html")
+    if not os.path.exists(file_path):
+        return HTMLResponse("<h1>Error: user.html not found in static folder</h1>", status_code=404)
     return FileResponse(file_path)
 
 # Sample UI

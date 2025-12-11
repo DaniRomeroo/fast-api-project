@@ -16,7 +16,7 @@
     <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
             <i class="fa-solid fa-shield-halved text-emerald-400 text-2xl"></i>
-            <h1 class="text-xl font-bold text-white">Admin Panel - Users</h1>
+            <h1 class="text-xl font-bold text-white">Admin Panel</h1>
         </div>
         <div class="flex gap-2">
             <button onclick="goBack()" class="bg-blue-500/20 hover:bg-blue-500/40 text-blue-400 py-2 px-4 rounded">
@@ -46,29 +46,52 @@
     <tbody id="usersTable"></tbody>
 </table>
 <!-- ETL Section -->
-<section class="mt-10 bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
-    <h2 class="text-xl font-bold mb-4 text-emerald-400">
-        <i class="fa-solid fa-database mr-2"></i> TwelveData ETL
-    </h2>
+<section class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+    <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
+        <h2 class="text-xl font-bold mb-4 text-emerald-400">
+            <i class="fa-solid fa-database mr-2"></i> TwelveData ETL
+        </h2>
 
-    <div class="flex gap-3">
-        <button onclick="runETL()"
-            class="bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 rounded">
-            Run ETL
-        </button>
+        <div class="flex gap-3">
+            <button onclick="runETL()"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 rounded">
+                Run ETL
+            </button>
 
-        <button onclick="loadLastResults()"
-            class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-            Last Results
-        </button>
+            <button onclick="loadLastResults()"
+                class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                Last Results
+            </button>
 
-        <button onclick="loadHistory()"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded">
-            History
-        </button>
+            <button onclick="loadHistory()"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded">
+                History
+            </button>
+        </div>
+
+        <pre id="etlOutput" class="mt-5 bg-slate-900 p-4 rounded text-sm overflow-x-auto border border-slate-700">Waiting...</pre>
     </div>
+    <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
+        <h2 class="text-xl font-bold mb-4 text-yellow-400">
+            <i class="fa-solid fa-plug mr-2"></i> OtherAPI ETL
+        </h2>
 
-    <pre id="etlOutput" class="mt-5 bg-slate-900 p-4 rounded text-sm overflow-x-auto border border-slate-700">Waiting...</pre>
+        <div class="flex gap-3">
+            <button onclick="" class="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded">
+                Run ETL
+            </button>
+
+            <button onclick="" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+                Last Results
+            </button>
+
+            <button onclick="" class="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded">
+                History
+            </button>
+        </div>
+
+        <pre id="etlOutputOAPI" class="mt-5 bg-slate-900 p-4 rounded text-sm overflow-x-auto border border-slate-700">Waiting...</pre>
+    </div>
 </section>
 </main>
 
