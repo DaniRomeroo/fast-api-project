@@ -8,12 +8,13 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from contextlib import asynccontextmanager
 import models, schemas, auth, database
 from logging_config import setup_logging
+from bson import ObjectId
 import logging
 import certifi
 import twelvedata_etl
 import os
-import datetime
-
+from datetime import datetime
+import apewisdom_etl
 # LIFECYCLE EVENTS
 
 @asynccontextmanager
@@ -258,3 +259,16 @@ async def get_twelvedata_results():
 @app.get("/etl/twelvedata/history")
 async def get_twelvedata_history():
     return await twelvedata_etl.get_history()
+
+@app.post("/etl/apewisdom/run")
+async def run_apewisdom_etl(max_pages: int = 5):
+    results = await apewisdom_etl.run_etl(max_pages=max_pages)
+    return len(results)
+
+@app.get("/etl/apewisdom/results")
+async def get_apewisdom_results(limit: int = 100):
+    return await apewisdom_etl.get_last_results(limit=limit)
+
+@app.get("/etl/apewisdom/history")
+async def get_apewisdom_history(limit: int = 100):
+    return await apewisdom_etl.get_history(limit=limit)

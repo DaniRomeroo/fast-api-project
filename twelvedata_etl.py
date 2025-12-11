@@ -50,7 +50,7 @@ async def run_etl(interval="1day", outputsize=30):
             await db[f"td_prices_{symbol}"].insert_many(data)
 
             all_data[symbol] = data
-            
+
             await db["td_logs"].insert_one({
                 "timestamp": datetime.now(),
                 "message": f"{symbol} processed ({len(data)} records inserted)"

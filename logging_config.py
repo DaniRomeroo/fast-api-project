@@ -4,10 +4,12 @@ import datetime
 import asyncio
 import database
 
+
 def setup_logging():
     """
     Configure logging for the application.
     """
+
     class MongoDBHandler(logging.Handler):
         def emit(self, record):
             if database.db_manager.db is not None:
@@ -34,6 +36,6 @@ def setup_logging():
             MongoDBHandler()
         ]
     )
-    
+
     # Set lower level for some noisy libraries if needed
     logging.getLogger("uvicorn.access").setLevel(logging.WARNING)

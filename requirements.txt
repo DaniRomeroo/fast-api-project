@@ -12,3 +12,6 @@ certifi
 pandas
 tenacity
 requests
+httpx>=0.24.0
+cachetools>=5.3.0   # opcional, para caché simple en memoria
+python-dotenv>=1.0.0

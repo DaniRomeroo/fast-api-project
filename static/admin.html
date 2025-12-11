@@ -77,15 +77,15 @@
         </h2>
 
         <div class="flex gap-3">
-            <button onclick="" class="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded">
+            <button onclick="runApeWisdomETL()" class="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded">
                 Run ETL
             </button>
 
-            <button onclick="" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+            <button onclick="loadApeWisdomResults()" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
                 Last Results
             </button>
 
-            <button onclick="" class="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded">
+            <button onclick="loadApeWisdomHistory()" class="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded">
                 History
             </button>
         </div>
@@ -225,6 +225,62 @@ async function loadHistory() {
 function setOutput(text) {
     document.getElementById("etlOutput").innerText = text;
 }
+
+async function runApeWisdomETL() {
+    setOutputApeWisdom("Running ApeWisdom ETL...");
+
+    try {
+        const res = await fetch("/etl/apewisdom/run", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!res.ok) throw new Error("Failed to run ApeWisdom ETL");
+        const data = await res.json();
+        setOutputApeWisdom("Inserted "+data+" records");
+    } catch (err) {
+        setOutputApeWisdom(err.message);
+    }
+}
+
+async function loadApeWisdomResults() {
+    setOutputApeWisdom("Loading ApeWisdom last results...");
+
+    try {
+        const res = await fetch("/etl/apewisdom/results", {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) throw new Error("Failed to load ApeWisdom results");
+        const data = await res.json();
+        setOutputApeWisdom(JSON.stringify(data, null, 2));
+    } catch (err) {
+        setOutputApeWisdom(err.message);
+    }
+}
+
+async function loadApeWisdomHistory() {
+    setOutputApeWisdom("Loading ApeWisdom history...");
+
+    try {
+        const res = await fetch("/etl/apewisdom/history", {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) throw new Error("Failed to load ApeWisdom history");
+        const data = await res.json();
+        setOutputApeWisdom(JSON.stringify(data, null, 2));
+    } catch (err) {
+        setOutputApeWisdom(err.message);
+    }
+}
+
+function setOutputApeWisdom(text) {
+    document.getElementById("etlOutputOAPI").innerText = text;
+}
+
 
 function goBack(){ window.location.href='/'; }
 function logout(){
