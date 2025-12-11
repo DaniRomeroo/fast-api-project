@@ -194,13 +194,9 @@ async def get_all_users(db=Depends(database.get_db)):
     return JSONResponse(content=filtered_users)
 
 @app.delete("/users/{user_id}")
-async def delete_user(
-    user_id: str,
-    current_user: dict = Depends(auth.get_current_user),
-    db=Depends(database.get_db)
-):
+async def delete_user(user_id: str, db=Depends(database.get_db)):
     try:
-        user_oid = ObjectId(user_id)  # Convertimos a ObjectId
+        user_oid = ObjectId(user_id)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid user ID")
     
@@ -209,15 +205,14 @@ async def delete_user(
         raise HTTPException(status_code=404, detail="User not found")
     
     # Soft delete
-    deletion_timestamp = datetime.utcnow()
-    await db["users"].update_one({"_id": user_oid}, {"$set": {"deleted_at": deletion_timestamp}})
+    deletion_timestamp = datetime.now()
+    await db["users"].update_one({"_id": user_oid}, {"$set": {"is_active": False, "deleted_at": deletion_timestamp}})
 
     return {
         "code": 200,
         "message": "User deleted successfully",
         "deleted_at": deletion_timestamp.isoformat()
     }
-
 
 @app.get("/admin")
 async def load_admin():

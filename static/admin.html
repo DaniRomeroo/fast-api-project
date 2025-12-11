@@ -109,23 +109,25 @@ async function fetchUsers() {
         tableBody.innerHTML='';
 
         users.forEach(user => {
-            const row = document.createElement('tr');
-            row.className="border-b border-slate-700 hover:bg-slate-700/30";
+            if(user.is_active){
+                const row = document.createElement('tr');
+                row.className="border-b border-slate-700 hover:bg-slate-700/30";
 
-            row.innerHTML = `
-                <td class="py-2 px-4">${user._id}</td>
-                <td class="py-2 px-4">${user.username}</td>
-                <td class="py-2 px-4">${user.full_name || "-"}</td>
-                <td class="py-2 px-4">${user.email || "-"}</td>
-                <td class="py-2 px-4">${user.role}</td>
-                <td class="py-2 px-4">${user.is_active ? "Yes" : "No"}</td>
-                <td class="py-2 px-4 flex gap-2">
-                    <button onclick="viewUser('${user._id}')" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded text-xs">View</button>
-                    <button onclick="editUser('${user._id}')" class="bg-emerald-500 hover:bg-emerald-600 text-white py-1 px-2 rounded text-xs">Edit</button>
-                    <button onclick="deleteUser('${user._id}')" class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded text-xs">Delete</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
+                row.innerHTML = `
+                    <td class="py-2 px-4">${user._id}</td>
+                    <td class="py-2 px-4">${user.username}</td>
+                    <td class="py-2 px-4">${user.full_name || "-"}</td>
+                    <td class="py-2 px-4">${user.email || "-"}</td>
+                    <td class="py-2 px-4">${user.role}</td>
+                    <td class="py-2 px-4">${user.is_active ? "Yes" : "No"}</td>
+                    <td class="py-2 px-4 flex gap-2">
+                        <button onclick="viewUser('${user._id}')" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded text-xs">View</button>
+                        <button onclick="editUser('${user._id}')" class="bg-emerald-500 hover:bg-emerald-600 text-white py-1 px-2 rounded text-xs">Edit</button>
+                        <button onclick="deleteUser('${user._id}')" class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded text-xs">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            }
         });
     } catch(err){
         alert(err.message);
