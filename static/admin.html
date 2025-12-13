@@ -73,7 +73,7 @@
     </div>
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
         <h2 class="text-xl font-bold mb-4 text-yellow-400">
-            <i class="fa-solid fa-plug mr-2"></i> OtherAPI ETL
+            <i class="fa-solid fa-database mr-2"></i> ApeWisdom ETL
         </h2>
 
         <div class="flex gap-3">
@@ -174,7 +174,7 @@ async function deleteUser(id){
 }
 
 async function runETL() {
-    setOutput("Running ETL...");
+    setOutput("Running TwelveData ETL...");
 
     try {
         const res = await fetch("/etl/twelvedata/run", {
@@ -193,7 +193,7 @@ async function runETL() {
 }
 
 async function loadLastResults() {
-    setOutput("Loading last results...");
+    setOutput("Loading TwelveData last results...");
 
     try {
         const res = await fetch("/etl/twelvedata/results", {
@@ -209,7 +209,7 @@ async function loadLastResults() {
 }
 
 async function loadHistory() {
-    setOutput("Loading history...");
+    setOutput("Loading TwelveData history...");
 
     try {
         const res = await fetch("/etl/twelvedata/history", {

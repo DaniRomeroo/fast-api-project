@@ -24,24 +24,22 @@ async def run_etl(max_pages: int = 5):
         await db[collection_name].insert_one(data)
         logger.info(f"Inserted data for {ticker} into collection {collection_name}")
 
-        # Insertar log en MongoDB
         await db["apewisdom_logs"].insert_one({
-            "timestamp": datetime.utcnow(),
-            "message": f"Inserted data for {ticker} ({len(data)} fields)",
-            "ticker": ticker
+            "timestamp": datetime.now(),
+            "message": f"Inserted data for {ticker} ({len(data)} records)",
         })
 
         all_data[ticker] = data
 
     return all_data
 
-async def get_last_results(limit: int = 100):
+async def get_last_results(limit = 100):
 
     db = await get_db()
     results = {}
     for ticker in SYMBOLS:
         collection_name = f"apewisdom_{ticker}"
-        cursor = db[collection_name].find().sort("_id", -1).limit(limit)
+        cursor = db[collection_name].find().sort("_id", -1)
         data = await cursor.to_list(length=limit)
         for item in data:
             if "_id" in item:
@@ -49,10 +47,10 @@ async def get_last_results(limit: int = 100):
         results[ticker] = data
     return results
 
-async def get_history(limit: int = 100):
+async def get_history(limit = 100):
 
     db = await get_db()
-    cursor = db["apewisdom_logs"].find().sort("timestamp", -1).limit(limit)
+    cursor = db["apewisdom_logs"].find().sort("timestamp", -1)
     history = await cursor.to_list(length=limit)
     for entry in history:
         if "_id" in entry:

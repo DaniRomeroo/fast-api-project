@@ -1,11 +1,6 @@
-# apewisdom_client.py
-import asyncio
-import httpx
-import logging
+import requests
 from urllib.parse import urljoin
 from typing import Dict, Any, Optional
-
-logger = logging.getLogger(__name__)
 
 BASE = "https://apewisdom.io/api/v1.0"
 TIMEOUT = 10
@@ -13,10 +8,11 @@ TIMEOUT = 10
 async def get_top_stocks_async(page: int = 1) -> Dict[str, Any]:
 
     url = urljoin(BASE + "/", f"filter/all-stocks/page/{page}")
-    async with httpx.AsyncClient(timeout=TIMEOUT) as client:
-        resp = await client.get(url, headers={"User-Agent": "Mozilla/5.0"})
-        resp.raise_for_status()
-        return resp.json()
+    response = requests.get(url, timeout=10)
+    if response.status_code == 429:
+        raise Exception("Rate limit exceeded")
+    response.raise_for_status()
+    return response.json()
 
 async def get_stock_async(ticker: str, max_pages: int = 5) -> Optional[Dict[str, Any]]:
 

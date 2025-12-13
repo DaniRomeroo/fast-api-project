@@ -255,15 +255,16 @@ async def get_twelvedata_results():
 async def get_twelvedata_history():
     return await twelvedata_etl.get_history()
 
+# ApeWisdom ETL
 @app.post("/etl/apewisdom/run")
-async def run_apewisdom_etl(max_pages: int = 5):
-    results = await apewisdom_etl.run_etl(max_pages=max_pages)
+async def run_apewisdom_etl():
+    results = await apewisdom_etl.run_etl()
     return len(results)
 
 @app.get("/etl/apewisdom/results")
-async def get_apewisdom_results(limit: int = 100):
-    return await apewisdom_etl.get_last_results(limit=limit)
+async def get_apewisdom_results():
+    return await apewisdom_etl.get_last_results()
 
 @app.get("/etl/apewisdom/history")
-async def get_apewisdom_history(limit: int = 100):
-    return await apewisdom_etl.get_history(limit=limit)
+async def get_apewisdom_history():
+    return await apewisdom_etl.get_history()

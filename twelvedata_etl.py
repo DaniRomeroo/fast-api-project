@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from database import get_db
-from utils import fetch_api, normalize_twelvedata
+import twelvedata_client
 from datetime import datetime
 import logging
 
@@ -12,10 +12,6 @@ logger = logging.getLogger("twelvedata_etl")
 # API key de Twelve Data (asegúrate de exportarla en tu entorno)
 TWELVE_DATA_KEY = os.getenv("TWELVEDATA_KEY")
 TWELVE_DATA_URL = "https://api.twelvedata.com/time_series"
-
-SYMBOLS1 = [
-    "AAPL",      # Apple Inc.
-]
 
 SYMBOLS = [
     "AAPL",      # Apple Inc.
@@ -34,7 +30,7 @@ async def run_etl(interval="1day", outputsize=30):
     all_data = {}
 
     for symbol in SYMBOLS:
-
+        logger.info(f"Fetching data for {symbol} from TwelveData...")
         params = {
             "symbol": symbol,
             "interval": interval,
@@ -43,11 +39,13 @@ async def run_etl(interval="1day", outputsize=30):
         }
 
         try:
-            raw_data = fetch_api(TWELVE_DATA_URL, params=params)
-            df = normalize_twelvedata(raw_data)
+            raw_data = twelvedata_client.fetch_api(TWELVE_DATA_URL, params=params)
+            df = twelvedata_client.normalize_twelvedata(raw_data)
             data = df.to_dict(orient="records")
 
             await db[f"td_prices_{symbol}"].insert_many(data)
+
+            logger.info(f"Inserted data for {symbol} into collection td_prices_{symbol}")
 
             all_data[symbol] = data
 
@@ -56,17 +54,12 @@ async def run_etl(interval="1day", outputsize=30):
                 "message": f"{symbol} processed ({len(data)} records inserted)"
             })
 
-            logger.info(f"{symbol} processed ({len(data)} records inserted)")
-
         except Exception as exc:
-            logger.error(f"Error procesando {symbol}: {exc}")
+            logger.error(f"Error {symbol}: {exc}")
 
     return all_data
 
 async def get_last_results():
-    """
-    Obtiene los últimos datos insertados del ETL y convierte ObjectId a string.
-    """
     db = await get_db()
     results = {}
 
