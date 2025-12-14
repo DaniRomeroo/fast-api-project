@@ -179,7 +179,7 @@ async def get_system_status(current_user: dict = Depends(auth.get_current_user))
     }
 
 @app.get("/users", response_model=schemas.UserResponse)
-async def get_all_users(db=Depends(database.get_db)):
+async def get_all_users(db=Depends(database.get_db), current_user: dict = Depends(auth.get_current_user)):
     users_cursor = db["users"].find({})
     users = await users_cursor.to_list(length=50)
     filtered_users = [
@@ -194,8 +194,73 @@ async def get_all_users(db=Depends(database.get_db)):
     ]
     return JSONResponse(content=filtered_users)
 
+@app.get("/users/{user_id}")
+async def get_user(user_id: str, db=Depends(database.get_db), current_user: dict = Depends(auth.get_current_user)):
+    try:
+        user_oid = ObjectId(user_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid user ID")
+    
+    user = await db["users"].find_one({"_id": user_oid})
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {
+        "_id": str(user["_id"]),
+        "username": user["username"],
+        "full_name": user.get("full_name"),
+        "email": user.get("email"),
+        "role": user.get("role", "user"),
+        "is_active": user.get("is_active", True)
+    }
+
+@app.put("/users/{user_id}")
+async def update_user(user_id: str, updates: dict, db=Depends(database.get_db), current_user: dict = Depends(auth.get_current_user)):
+    try:
+        user_oid = ObjectId(user_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid user ID")
+
+    allowed_fields = {"full_name", "email"}
+    data_to_update = {k: v for k, v in updates.items() if k in allowed_fields}
+
+    if not data_to_update:
+        raise HTTPException(status_code=400, detail="No valid fields to update")
+
+    result = await db["users"].update_one({"_id": user_oid}, {"$set": data_to_update})
+    if not result:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {"code": 200, 
+            "message": "User updated successfully", 
+            "updated_fields": data_to_update
+    }
+
+@app.put("/users/{user_id}/role")
+async def update_user_role(user_id: str, payload: dict, db=Depends(database.get_db), current_user: dict = Depends(auth.get_current_user)):
+    try:
+        oid = ObjectId(user_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid user_id")
+
+    new_role = payload.get("role")
+    if not new_role:
+        raise HTTPException(status_code=400, detail="Missing role in request body")
+    
+    result = await db["users"].update_one({"_id": oid}, {"$set": {"role": new_role}})
+    if not result:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return JSONResponse(content={
+        "code": 200,
+        "message": f"Role updated to {new_role}",
+        "user_id": user_id,
+        "role": new_role
+    })
+
 @app.delete("/users/{user_id}")
-async def delete_user(user_id: str, db=Depends(database.get_db)):
+async def delete_user(user_id: str, db=Depends(database.get_db), current_user: dict = Depends(auth.get_current_user)):
     try:
         user_oid = ObjectId(user_id)
     except Exception:

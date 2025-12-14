@@ -20,7 +20,6 @@ def compute_price_trend(prices: list[float]):
 
     return trend, round(change_pct, 2)
 
-
 def classify_social_interest(mentions: list[float]):
     if not mentions:
         return None
@@ -33,7 +32,6 @@ def classify_social_interest(mentions: list[float]):
         return "medium"
     else:
         return "low"
-
 
 def build_summary(price_trend, social_level, correlation):
     if price_trend is None or social_level is None:
@@ -70,7 +68,6 @@ def build_summary(price_trend, social_level, correlation):
         )
 
     return "No clear pattern could be identified from the available data."
-
 
 async def analyze_symbol(symbol: str, td_limit: int = 30, aw_limit: int = 30):
 

@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel - Users</title>
+<title>Admin Panel</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -93,6 +93,52 @@
         <pre id="etlOutputOAPI" class="mt-5 bg-slate-900 p-4 rounded text-sm overflow-x-auto border border-slate-700">Waiting...</pre>
     </div>
 </section>
+<div id="userModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
+    <div class="bg-slate-800 p-8 rounded-lg w-[28rem] max-w-[90%] min-h-[24rem] border border-slate-700">
+        <h3 class="text-xl font-bold mb-4">User details</h3>
+        <div id="userDetails" class="text-base bg-slate-900 p-3 rounded text-white flex flex-col gap-3">
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Id:</strong>
+                <span id="user_id"></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Username:</strong>
+                <span id="user_username"></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Full Name:</strong>
+                <input type="text" id="user_fullname_input" class="flex-1 p-1 rounded border border-slate-700 text-white bg-transparent"/>
+                <i class="fa-solid fa-pencil text-xs text-yellow-400"></i>
+            </div>
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Email:</strong>
+                <input type="email" id="user_email_input" class="flex-1 p-1 rounded border border-slate-700 text-white bg-transparent"/>
+                <i class="fa-solid fa-pencil text-xs text-yellow-400"></i>
+            </div>
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Active:</strong>
+                <span id="user_active"></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Role:</strong>
+                <select id="user_role_select" class="flex-1 p-1 rounded text-white border border-slate-600 bg-transparent">
+                    <option class="text-black" value="role_user">role_user</option>
+                    <option class="text-black" value="admin">admin</option>
+                </select>
+                <i class="fa-solid fa-pencil text-xs text-yellow-400"></i>
+            </div>
+        </div>
+
+        <div class="mt-4 flex gap-2">
+            <button onclick="updateUser()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded">
+                Save
+            </button>
+            <button onclick="closeModal()" class="w-1/2 bg-red-600 hover:bg-red-700 text-white py-2 rounded">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
 </main>
 
 <script>
@@ -122,7 +168,6 @@ async function fetchUsers() {
                     <td class="py-2 px-4">${user.is_active ? "Yes" : "No"}</td>
                     <td class="py-2 px-4 flex gap-2">
                         <button onclick="viewUser('${user._id}')" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded text-xs">View</button>
-                        <button onclick="editUser('${user._id}')" class="bg-emerald-500 hover:bg-emerald-600 text-white py-1 px-2 rounded text-xs">Edit</button>
                         <button onclick="deleteUser('${user._id}')" class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded text-xs">Delete</button>
                     </td>
                 `;
@@ -136,26 +181,58 @@ async function fetchUsers() {
 }
 
 // CRUD functions
-function viewUser(id){
-    alert('View user: ' + id);
-    // Aquí podrías abrir un modal o redirigir a otra página con detalles del usuario
+async function viewUser(id) {
+    try {
+        const res = await fetch('/users/' + id, {
+            method: 'GET',
+            headers: {'Authorization': `Bearer ${token}`}
+        });
+        if (!res.ok) throw new Error('Failed to load user');
+
+        const user = await res.json();
+
+        document.getElementById('user_id').innerText = user._id;
+        document.getElementById('user_username').innerText = user.username;
+        document.getElementById('user_fullname_input').value = user.full_name || '';
+        document.getElementById('user_email_input').value = user.email || '';
+        document.getElementById('user_active').innerText = user.is_active ? 'Yes' : 'No';
+        document.getElementById('user_role_select').value = user.role || 'role_user';
+
+        document.getElementById('userModal').classList.remove('hidden');
+    } catch(err){
+        alert(err.message);
+    }
 }
 
-async function editUser(id){
-    const newUsername = prompt('Enter new username:');
-    if(!newUsername) return;
-    try{
-        const res = await fetch('/users/' + id, {
+async function updateUser(){
+    const userId = document.getElementById('user_id').innerText;
+    const fullname = document.getElementById('user_fullname_input').value;
+    const email = document.getElementById('user_email_input').value;
+    const role = document.getElementById('user_role_select').value;
+
+    try {
+        const res1 = await fetch(`/users/${userId}`, {
             method: 'PUT',
             headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
-            body: JSON.stringify({username: newUsername})
+            body: JSON.stringify({full_name: fullname, email: email})
         });
-        if(!res.ok) throw new Error('Failed to update user');
-        alert('User updated');
+        if(!res1.ok) throw new Error('Failed to update user info');
+
+        const res2 = await fetch(`/users/${userId}/role`, {
+            method: 'PUT',
+            headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
+            body: JSON.stringify({role: role})
+        });
+        if(!res2.ok) throw new Error('Failed to update role');
+        closeModal();
         fetchUsers();
     } catch(err){
         alert(err.message);
     }
+}
+
+function closeModal(){
+    document.getElementById('userModal').classList.add('hidden');
 }
 
 async function deleteUser(id){
@@ -173,6 +250,7 @@ async function deleteUser(id){
     }
 }
 
+// ETL functions
 async function runETL() {
     setOutput("Running TwelveData ETL...");
 

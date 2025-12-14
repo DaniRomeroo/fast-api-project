@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FastAPI Auth Dashboard</title>
+    <title>Stock Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -25,8 +25,8 @@
     <nav class="bg-slate-800 border-b border-slate-700 shadow-lg">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-shield-halved text-emerald-400 text-2xl"></i>
-                <h1 class="text-xl font-bold tracking-wide text-white">Auth Node Registry</h1>
+                <i class="fa-solid fa-chart-column text-emerald-400 text-2xl"></i>
+                <h1 class="text-xl font-bold tracking-wide text-white">Stock Analysis</h1>
             </div>
             <div id="authStatus" class="text-sm text-slate-400">
                 Not logged in
@@ -126,18 +126,18 @@
 
                 <!-- Action Buttons -->
                 <div id="action-buttons" class="p-4 bg-slate-900 border-t border-slate-800 grid grid-cols-2 gap-4">
-                    <button onclick="window.location.href='/user'" id="btnMe" disabled
+                    <button onclick="window.location.href='/user'" id="btnMe" hidden
                         class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 px-4 rounded border border-slate-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i class="fa-solid fa-user mr-2"></i> /users/me
+                        <i class="fa-solid fa-user mr-2"></i> User Panel
                     </button>
-                    <button onclick="fetchStatus()" id="btnStatus" disabled
+                    <button onclick="fetchStatus()" id="btnStatus" hidden
                         class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 px-4 rounded border border-slate-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i class="fa-solid fa-server mr-2"></i> /system/status
+                        <i class="fa-solid fa-server mr-2"></i> Status
                     </button>
                     <!-- Ahora redirige a la ruta /users -->
                     <button onclick="window.location.href='/admin'" id="btnUsers" hidden
                         class="col-span-2 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 px-4 rounded border border-slate-600 transition">
-                        <i class="fa-solid fa-user mr-2"></i> /users
+                        <i class="fa-solid fa-user mr-2"></i> Admin Panel
                     </button>
                     <button onclick="logout()" id="btnLogout" disabled
                         class="col-span-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 py-2 px-4 rounded border border-red-500/30 transition disabled:opacity-50 disabled:cursor-not-allowed">
@@ -167,10 +167,9 @@
 
         function updateUI() {
             const isLoggedIn = !!token;
-            document.getElementById('btnMe').disabled = !isLoggedIn;
-            document.getElementById('btnStatus').disabled = !isLoggedIn;
-            document.getElementById('btnLogout').disabled = !isLoggedIn;
             document.getElementById('btnMe').hidden = !isLoggedIn;
+            document.getElementById('btnStatus').hidden = !isLoggedIn;
+            document.getElementById('btnLogout').disabled = !isLoggedIn;
 
             const user_role = localStorage.getItem('role');
             if (user_role === "admin") {

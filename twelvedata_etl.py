@@ -13,17 +13,7 @@ logger = logging.getLogger("twelvedata_etl")
 TWELVE_DATA_KEY = os.getenv("TWELVEDATA_KEY")
 TWELVE_DATA_URL = "https://api.twelvedata.com/time_series"
 
-SYMBOLS = [
-    "AAPL",      # Apple Inc.
-    "MSFT",      # Microsoft Corporation
-    "GOOGL",     # Alphabet Inc. (Google)
-    "AMZN",      # Amazon.com, Inc.
-    "META",      # Meta Platforms, Inc.
-    "INTC",      # Intel Corporation
-    "NVDA",      # NVIDIA Corporation
-    "ORCL"       # Oracle Corporation
-]
-
+SYMBOLS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "INTC", "NVDA", "ORCL"]
 
 async def run_etl(interval="1day", outputsize=30):
     db = await get_db()

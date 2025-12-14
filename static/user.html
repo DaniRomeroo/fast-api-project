@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Panel - Stock Analysis</title>
+    <title>User Panel</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,25 +30,30 @@
         </div>
     </div>
 </nav>
-<!-- User Info -->
-<section class="bg-slate-800 p-2 rounded-lg border border-slate-700 shadow-sm mb-6">
-    <h2 class="text-sm font-bold mb-1 text-emerald-400 flex items-center gap-1">
-        <i class="fa-solid fa-user-circle"></i> User Info
-    </h2>
-
-    <div class="flex flex-wrap gap-4 text-sm text-white">
-        <span><strong>Id:</strong> <span id="user_id">Loading...</span></span>
-        <span><strong>Username:</strong> <span id="user_username">Loading...</span></span>
-        <span><strong>Name:</strong> <span id="user_fullname">Loading...</span></span>
-        <span><strong>Email:</strong> <span id="user_email">Loading...</span></span>
-        <span><strong>User Active:</strong> <span id="user_active">Loading...</span></span>
-        <span><strong>Role:</strong> <span id="user_role">Loading...</span></span>
-    </div>
-</section>
-
-
 
 <main class="max-w-6xl mx-auto px-4 py-10">
+
+<!-- User Info -->
+<section class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg mb-10">
+    <div>
+        <div class="flex items-center justify-between mb-5">
+            <h2 class="text-base font-bold text-emerald-400 flex items-center gap-1">
+                <i class="fa-solid fa-user-circle"></i> User Info
+            </h2>
+            <button onclick="openUserModal()" class="text-emerald-400 hover:text-emerald-300">
+                <i class="fa-solid fa-pencil"></i>
+            </button>
+        </div>
+        <div class="flex flex-wrap gap-4 text-base text-white">
+            <span><strong>Id:</strong> <span id="user_id">Loading...</span></span>
+            <span><strong>Username:</strong> <span id="user_username">Loading...</span></span>
+            <span><strong>Name:</strong> <span id="user_fullname">Loading...</span></span>
+            <span><strong>Email:</strong> <span id="user_email">Loading...</span></span>
+            <span><strong>User Active:</strong> <span id="user_active">Loading...</span></span>
+            <span><strong>Role:</strong> <span id="user_role">Loading...</span></span>
+        </div>
+    </div>
+</section>
 
 <h2 class="text-2xl font-bold mb-6">Stock Analysis</h2>
 
@@ -114,12 +119,7 @@
         </div>
     </div>
 
-    <pre
-        id="analysisOutput"
-        class="bg-slate-900 p-4 rounded text-sm overflow-x-auto border border-slate-700 mt-6"
-    >
-Waiting...
-    </pre>
+    <pre id="analysisOutput" class="bg-slate-900 p-4 rounded text-sm overflow-x-auto border border-slate-700 mt-6"> Waiting...</pre>
 
     <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
 
@@ -136,7 +136,48 @@ Waiting...
     </div>
 
 </section>
+<div id="userModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
+    <div class="bg-slate-800 p-8 rounded-lg w-[28rem] max-w-[90%] min-h-[24rem] border border-slate-700">
+        <h3 class="text-xl font-bold mb-4">User details</h3>
+        <div id="userDetails" class="text-base bg-slate-900 p-3 rounded text-white flex flex-col gap-3">
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Id:</strong>
+                <span id="modal_user_id"></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Username:</strong>
+                <span id="modal_user_username"></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Full Name:</strong>
+                <input type="text" id="user_fullname_input" class="flex-1 p-1 rounded border border-slate-700 text-white bg-transparent"/>
+                <i class="fa-solid fa-pencil text-xs text-yellow-400"></i>
+            </div>
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Email:</strong>
+                <input type="email" id="user_email_input" class="flex-1 p-1 rounded border border-slate-700 text-white bg-transparent"/>
+                <i class="fa-solid fa-pencil text-xs text-yellow-400"></i>
+            </div>
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Active:</strong>
+                <span id="modal_user_active"></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <strong class="w-24">Role:</strong>
+                <span id="modal_user_role"></span>
+            </div>
+        </div>
 
+        <div class="mt-4 flex gap-2">
+            <button onclick="updateUser()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded">
+                Save
+            </button>
+            <button onclick="closeModal()" class="w-1/2 bg-red-600 hover:bg-red-700 text-white py-2 rounded">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
 </main>
 
 <script>
@@ -252,18 +293,65 @@ async function loadUserProfile() {
         document.getElementById("user_username").innerText = data.username ?? "-";
         document.getElementById("user_fullname").innerText = data.full_name ?? "-";
         document.getElementById("user_email").innerText = data.email ?? "-";
-        document.getElementById("user_active").innerText = data.is_active ?? "-";
+        document.getElementById("user_active").innerText = data.is_active ? 'Yes' : 'No' ?? "-";
         document.getElementById("user_role").innerText = data.role ?? "-";
     } catch (err) {
         console.error(err);
-        document.getElementById("user_id").innerText = "-";
-        document.getElementById("user_username").innerText = "-";
-        document.getElementById("user_fullname").innerText = "-";
-        document.getElementById("user_email").innerText = "-";
-        document.getElementById("user_active").innerText = "-";
-        document.getElementById("user_role").innerText = "-";
     }
 }
+
+async function openUserModal() {
+    const userId = document.getElementById('user_id').innerText;
+
+    try {
+        const res = await fetch('/users/' + userId, {
+            method: 'GET',
+            headers: {'Authorization': `Bearer ${token}`}
+        });
+        if (!res.ok) throw new Error('Failed to load user');
+
+        const user = await res.json();
+        
+        document.getElementById('modal_user_id').innerText = user._id;
+        document.getElementById('modal_user_username').innerText = user.username;
+        document.getElementById('user_fullname_input').value = user.full_name || '';
+        document.getElementById('user_email_input').value = user.email || '';
+        document.getElementById('modal_user_active').innerText = user.is_active ? 'Yes' : 'No';
+        document.getElementById('modal_user_role').innerText = user.role || 'role_user';
+
+        document.getElementById('userModal').classList.remove('hidden');
+    } catch(err){
+        alert(err.message);
+    }
+}
+
+async function updateUser(){
+    const userId = document.getElementById('user_id').innerText;
+    const fullName = document.getElementById('user_fullname_input').value;
+    const email = document.getElementById('user_email_input').value;
+
+    try {
+        const res = await fetch('/users/' + userId, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ full_name: fullName, email: email })
+        });
+
+        if (!res.ok) throw new Error('Failed to update user');
+        closeModal();
+        loadUserProfile();
+    } catch(err){
+        alert(err.message);
+    }
+}
+
+function closeModal(){
+    document.getElementById('userModal').classList.add('hidden');
+}
+
 
 loadUserProfile();
 </script>

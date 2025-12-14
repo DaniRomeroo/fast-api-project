@@ -18,10 +18,7 @@ def normalize_twelvedata(data):
         return pd.DataFrame()
     
     df = pd.DataFrame(data["values"])
-    # Nos quedamos solo con fecha y precio de cierre
     df = df[["datetime", "close"]]
-    # Convertimos la fecha a datetime
     df["datetime"] = pd.to_datetime(df["datetime"])
-    # Ordenamos por fecha ascendente
     df = df.sort_values("datetime").reset_index(drop=True)
     return df
