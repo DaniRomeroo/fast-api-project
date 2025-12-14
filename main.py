@@ -15,6 +15,7 @@ import twelvedata_etl
 import os
 from datetime import datetime
 import apewisdom_etl
+from analysis_etl import analyze_symbol
 # LIFECYCLE EVENTS
 
 @asynccontextmanager
@@ -268,3 +269,8 @@ async def get_apewisdom_results():
 @app.get("/etl/apewisdom/history")
 async def get_apewisdom_history():
     return await apewisdom_etl.get_history()
+
+@app.get("/analyze/{symbol}")
+async def analyze(symbol: str):
+    result = await analyze_symbol(symbol)
+    return result

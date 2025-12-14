@@ -1,6 +1,7 @@
 import requests
 from urllib.parse import urljoin
 from typing import Dict, Any, Optional
+from datetime import datetime
 
 BASE = "https://apewisdom.io/api/v1.0"
 TIMEOUT = 10
@@ -21,12 +22,14 @@ async def get_stock_async(ticker: str, max_pages: int = 5) -> Optional[Dict[str,
         top_page = await get_top_stocks_async(page)
         for item in top_page.get("results", []):
             if item.get("ticker") == ticker:
+                today_str = datetime.utcnow().strftime("%d/%m/%Y")
                 return {
                     "rank": item.get("rank"),
                     "ticker": item.get("ticker"),
                     "mentions": item.get("mentions"),
                     "upvotes": item.get("upvotes"),
                     "rank_24h_ago": item.get("rank_24h_ago"),
-                    "mentions_24h_ago": item.get("mentions_24h_ago")
+                    "mentions_24h_ago": item.get("mentions_24h_ago"),
+                    "date": today_str
                 }
     return {}

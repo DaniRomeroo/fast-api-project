@@ -126,9 +126,9 @@
 
                 <!-- Action Buttons -->
                 <div id="action-buttons" class="p-4 bg-slate-900 border-t border-slate-800 grid grid-cols-2 gap-4">
-                    <button onclick="fetchMe()" id="btnMe" disabled
+                    <button onclick="window.location.href='/user'" id="btnMe" disabled
                         class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 px-4 rounded border border-slate-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i class="fa-solid fa-id-card mr-2"></i> /users/me
+                        <i class="fa-solid fa-user mr-2"></i> /users/me
                     </button>
                     <button onclick="fetchStatus()" id="btnStatus" disabled
                         class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 px-4 rounded border border-slate-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
@@ -170,6 +170,7 @@
             document.getElementById('btnMe').disabled = !isLoggedIn;
             document.getElementById('btnStatus').disabled = !isLoggedIn;
             document.getElementById('btnLogout').disabled = !isLoggedIn;
+            document.getElementById('btnMe').hidden = !isLoggedIn;
 
             const user_role = localStorage.getItem('role');
             if (user_role === "admin") {

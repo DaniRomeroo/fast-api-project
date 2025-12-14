@@ -2,11 +2,13 @@
 <html lang="en">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>User Panel - Data</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Panel - Stock Analysis</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="bg-slate-900 text-slate-200 font-sans min-h-screen">
@@ -28,83 +30,242 @@
         </div>
     </div>
 </nav>
-
-<main class="max-w-6xl mx-auto px-4 py-10">
-<h2 class="text-2xl font-bold mb-6">Available Data</h2>
-<table class="w-full text-left border-collapse">
-    <thead class="sticky top-0 bg-slate-800">
-        <tr class="border-b border-slate-600">
-            <th class="py-2 px-4">ID</th>
-            <th class="py-2 px-4">Name</th>
-            <th class="py-2 px-4">Value</th>
-            <th class="py-2 px-4">Date</th>
-        </tr>
-    </thead>
-    <tbody id="dataTable"></tbody>
-</table>
-
-<!-- Optional ETL Results (read-only) -->
-<section class="mt-10 bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
-    <h2 class="text-xl font-bold mb-4 text-emerald-400">
-        <i class="fa-solid fa-database mr-2"></i> ETL Results (Read-Only)
+<!-- User Info -->
+<section class="bg-slate-800 p-2 rounded-lg border border-slate-700 shadow-sm mb-6">
+    <h2 class="text-sm font-bold mb-1 text-emerald-400 flex items-center gap-1">
+        <i class="fa-solid fa-user-circle"></i> User Info
     </h2>
 
-    <button onclick="loadUserData()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-        Load Data
-    </button>
+    <div class="flex flex-wrap gap-4 text-sm text-white">
+        <span><strong>Id:</strong> <span id="user_id">Loading...</span></span>
+        <span><strong>Username:</strong> <span id="user_username">Loading...</span></span>
+        <span><strong>Name:</strong> <span id="user_fullname">Loading...</span></span>
+        <span><strong>Email:</strong> <span id="user_email">Loading...</span></span>
+        <span><strong>User Active:</strong> <span id="user_active">Loading...</span></span>
+        <span><strong>Role:</strong> <span id="user_role">Loading...</span></span>
+    </div>
+</section>
 
-    <pre id="etlOutputUser" class="mt-5 bg-slate-900 p-4 rounded text-sm overflow-x-auto border border-slate-700">
+
+
+<main class="max-w-6xl mx-auto px-4 py-10">
+
+<h2 class="text-2xl font-bold mb-6">Stock Analysis</h2>
+
+<!-- Stock selector -->
+<section class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg mb-10">
+    <div class="flex gap-3 mb-4">
+        <input
+            type="text"
+            id="symbolInput"
+            placeholder="Enter ticker, e.g. AAPL"
+            class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white w-full focus:outline-none focus:ring-2 focus:ring-yellow-400"
+        />
+        <button
+            onclick="fetchAnalysis()"
+            class="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded"
+        >
+            Analyze
+        </button>
+    </div>
+
+    <!-- Supported stocks cheat sheet -->
+    <div class="mt-4">
+        <p class="text-sm text-slate-400 mb-2">
+            Supported stocks (click to autofill):
+        </p>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+            <button onclick="setSymbol('AAPL')" class="bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded px-3 py-2 text-left">
+                <strong>AAPL</strong><br>
+                <span class="text-slate-400">Apple</span>
+            </button>
+
+            <button onclick="setSymbol('MSFT')" class="bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded px-3 py-2 text-left">
+                <strong>MSFT</strong><br>
+                <span class="text-slate-400">Microsoft</span>
+            </button>
+
+            <button onclick="setSymbol('GOOGL')" class="bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded px-3 py-2 text-left">
+                <strong>GOOGL</strong><br>
+                <span class="text-slate-400">Alphabet</span>
+            </button>
+
+            <button onclick="setSymbol('ORCL')" class="bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded px-3 py-2 text-left">
+                <strong>ORCL</strong><br>
+                <span class="text-slate-400">Oracle</span>
+            </button>
+            <button onclick="setSymbol('INTC')" class="bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded px-3 py-2 text-left">
+                <strong>INTC</strong><br>
+                <span class="text-slate-400">Intel</span>
+            </button>
+            <button onclick="setSymbol('NVDA')" class="bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded px-3 py-2 text-left">
+                <strong>NVDA</strong><br>
+                <span class="text-slate-400">Nvidia</span>
+            </button>
+            <button onclick="setSymbol('META')" class="bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded px-3 py-2 text-left">
+                <strong>META</strong><br>
+                <span class="text-slate-400">Meta</span>
+            </button>
+            <button onclick="setSymbol('AMZN')" class="bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded px-3 py-2 text-left">
+                <strong>AMZN</strong><br>
+                <span class="text-slate-400">Amazon</span>
+            </button>
+        </div>
+    </div>
+
+    <pre
+        id="analysisOutput"
+        class="bg-slate-900 p-4 rounded text-sm overflow-x-auto border border-slate-700 mt-6"
+    >
 Waiting...
     </pre>
+
+    <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <div class="bg-slate-900 border border-slate-700 rounded p-4">
+            <h3 class="font-bold mb-3">Price Evolution</h3>
+            <canvas id="priceChart"></canvas>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-700 rounded p-4">
+            <h3 class="font-bold mb-3">Social Mentions (ApeWisdom – 24h)</h3>
+            <canvas id="mentionsChart"></canvas>
+        </div>
+
+    </div>
+
 </section>
+
 </main>
 
 <script>
 const token = localStorage.getItem('access_token');
 
-async function loadUserData() {
-    setUserOutput("Loading data...");
+let priceChart = null;
+let mentionsChart = null;
+
+async function fetchAnalysis() {
+    const symbol = document.getElementById('symbolInput').value.trim().toUpperCase();
+
+    if (!symbol) {
+        alert('Please enter a ticker symbol.');
+        return;
+    }
+
+    const output = document.getElementById('analysisOutput');
+    output.innerText = 'Fetching analysis...';
+
     try {
-        const res = await fetch('/users/data', {
-            headers: { "Authorization": `Bearer ${token}` }
+        const res = await fetch(`/analyze/${symbol}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
         });
-        if(!res.ok) throw new Error('Failed to fetch data');
+
+        if (!res.ok) {
+            throw new Error('Analysis not available for this symbol');
+        }
+
         const data = await res.json();
 
-        const tableBody = document.getElementById('dataTable');
-        tableBody.innerHTML = '';
+        output.innerText = `
+Symbol: ${symbol}
 
-        data.forEach(row => {
-            const tr = document.createElement('tr');
-            tr.className = "border-b border-slate-700 hover:bg-slate-700/30";
-            tr.innerHTML = `
-                <td class="py-2 px-4">${row._id}</td>
-                <td class="py-2 px-4">${row.name}</td>
-                <td class="py-2 px-4">${row.value}</td>
-                <td class="py-2 px-4">${row.date}</td>
-            `;
-            tableBody.appendChild(tr);
-        });
+Last Price (TwelveData): ${data.td_last_price ?? "-"}
+Mentions (ApeWisdom):   ${data.aw_last_mentions ?? "-"}
 
-        setUserOutput("Data loaded successfully");
-    } catch(err) {
-        setUserOutput(err.message);
+Price Trend:            ${data.price_trend ?? "-"}
+Social Interest:        ${data.social_interest ?? "-"}
+
+TD Records:             ${data.td_count ?? "-"}
+AW Records:             ${data.aw_count ?? "-"}
+
+Explanation:
+${data.summary ?? "No summary available"}
+        `;
+
+        // ---- PRICE CHART ----
+        if (priceChart) priceChart.destroy();
+        priceChart = new Chart(
+            document.getElementById('priceChart'),
+            {
+                type: 'line',
+                data: {
+                    labels: data.td_prices_series.map((_, i) => i + 1),
+                    datasets: [{
+                        label: 'Price',
+                        data: data.td_prices_series,
+                        borderWidth: 2,
+                        tension: 0.3
+                    }]
+                }
+            }
+        );
+
+        // ---- MENTIONS CHART ----
+        if (mentionsChart) mentionsChart.destroy();
+        mentionsChart = new Chart(
+            document.getElementById('mentionsChart'),
+            {
+                type: 'bar',
+                data: {
+                    labels: data.aw_mentions_series.map((_, i) => i + 1),
+                    datasets: [{
+                        label: 'Mentions',
+                        data: data.aw_mentions_series
+                    }]
+                }
+            }
+        );
+
+    } catch (err) {
+        output.innerText = `Error: ${err.message}`;
     }
 }
 
-function setUserOutput(text) {
-    document.getElementById('etlOutputUser').innerText = text;
+function goBack() {
+    window.location.href = '/';
 }
 
-function goBack(){ window.location.href='/'; }
-function logout(){
+function logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user_id');
     localStorage.removeItem('role');
-    window.location.href='/';
+    window.location.href = '/';
 }
 
-loadUserData();
+function setSymbol(symbol) {
+    document.getElementById('symbolInput').value = symbol;
+}
+</script>
+<script>
+async function loadUserProfile() {
+    try {
+        const res = await fetch("/users/me", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("access_token")}` }
+        });
+        if (!res.ok) throw new Error("Failed to load user info");
+
+        const data = await res.json();
+        document.getElementById("user_id").innerText = data._id ?? "-";
+        document.getElementById("user_username").innerText = data.username ?? "-";
+        document.getElementById("user_fullname").innerText = data.full_name ?? "-";
+        document.getElementById("user_email").innerText = data.email ?? "-";
+        document.getElementById("user_active").innerText = data.is_active ?? "-";
+        document.getElementById("user_role").innerText = data.role ?? "-";
+    } catch (err) {
+        console.error(err);
+        document.getElementById("user_id").innerText = "-";
+        document.getElementById("user_username").innerText = "-";
+        document.getElementById("user_fullname").innerText = "-";
+        document.getElementById("user_email").innerText = "-";
+        document.getElementById("user_active").innerText = "-";
+        document.getElementById("user_role").innerText = "-";
+    }
+}
+
+loadUserProfile();
 </script>
 
 </body>

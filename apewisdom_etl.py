@@ -1,4 +1,3 @@
-# apewisdom_etl.py
 import logging
 from database import get_db
 import apewisdom_client
@@ -6,7 +5,7 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-SYMBOLS = ["AAPL", "MSFT", "GOOGL", "AMZON", "META", "INTC", "NVDA", "ORCL"]
+SYMBOLS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "INTC", "NVDA", "ORCL"]
 
 async def run_etl(max_pages: int = 5):
 
