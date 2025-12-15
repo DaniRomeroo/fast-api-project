@@ -31,20 +31,22 @@
 
 <main class="max-w-6xl mx-auto px-4 py-10">
 <h2 class="text-2xl font-bold mb-6">Registered Users</h2>
-<table class="w-full text-left border-collapse">
-    <thead class="sticky top-0 bg-slate-800">
-        <tr class="border-b border-slate-600">
-            <th class="py-2 px-4">ID</th>
-            <th class="py-2 px-4">Username</th>
-            <th class="py-2 px-4">Full Name</th>
-            <th class="py-2 px-4">Email</th>
-            <th class="py-2 px-4">Role</th>
-            <th class="py-2 px-4">Active</th>
-            <th class="py-2 px-4">Actions</th>
-        </tr>
-    </thead>
-    <tbody id="usersTable"></tbody>
-</table>
+<div class="overflow-x-auto rounded-lg border border-slate-700">
+    <table class="min-w-[900px] w-full text-left border-collapse">
+        <thead class="sticky top-0 bg-slate-800">
+            <tr class="border-b border-slate-600">
+                <th class="py-2 px-4">ID</th>
+                <th class="py-2 px-4">Username</th>
+                <th class="py-2 px-4">Full Name</th>
+                <th class="py-2 px-4">Email</th>
+                <th class="py-2 px-4">Role</th>
+                <th class="py-2 px-4">Active</th>
+                <th class="py-2 px-4">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="usersTable"></tbody>
+    </table>
+</div>
 <!-- ETL Section -->
 <section class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
     <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
