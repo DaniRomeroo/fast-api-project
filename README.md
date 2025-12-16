@@ -17,7 +17,6 @@ The system integrates multiple public APIs, stores historical data in MongoDB an
 - **User dashboard** for stock analysis and visualization
 - **Admin dashboard** for user management, ETL execution and monitoring
 - Interactive charts using **Chart.js**
-- Modular and extensible backend architecture
 
 ---
 ## 🏗️ System Architecture (Overview)
