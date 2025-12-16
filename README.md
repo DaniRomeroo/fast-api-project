@@ -1,71 +1,73 @@
-# Sample API with MongoDB + Authentication
-Distributed System Node Registry with OAuth2 authentication and MongoDB Atlas backend. This API allows for user registration, authentication, and secure access to protected endpoints.
+# 📈 Stock & Social Interest Analysis
+Distributed Computing – Project 02 
 
-## Project Structure
+A web-based data aggregation and analysis platform that combines **financial market data** with **social interest signals** to provide exploratory insights on stock behavior.  
+The system integrates multiple public APIs, stores historical data in MongoDB and exposes analytical results through a RESTful API and a role-based web interface.
 
-*   **`main.py`**: The entry point of the application. Contains the FastAPI app definition, lifecycle events (startup/shutdown), and all API endpoints (`/register`, `/token`, `/users/me`, `/system/status`).
-*   **`auth.py`**: Handles authentication logic, including password hashing (bcrypt), JWT token creation and verification, and the `get_current_user` dependency.
-*   **`database.py`**: Manages the connection to MongoDB Atlas using `motor` (AsyncIO driver).
-*   **`models.py`**: Defines the data models for database storage (e.g., `UserInDB`).
-*   **`schemas.py`**: Defines Pydantic schemas for API request and response validation (e.g., `UserCreate`, `UserResponse`, `Token`).
-*   **`requirements.txt`**: Lists all Python dependencies required to run the project.
+---
+## 🚀 Features
 
-## Setup & Deployment
+- Integration of **multiple public APIs**:
+  - **TwelveData** – historical stock prices
+  - **ApeWisdom** – social interest metrics (mentions & votes)
+- Asynchronous **ETL pipelines** with logging and history
+- **Cross-source analysis** combining financial and social data
+- Rule-based analytical summaries (non-predictive)
+- **JWT authentication** with role-based access control
+- **User dashboard** for stock analysis and visualization
+- **Admin dashboard** for user management, ETL execution and monitoring
+- Interactive charts using **Chart.js**
+- Modular and extensible backend architecture
 
-Follow these steps to deploy the application.
+---
+## 🏗️ System Architecture (Overview)
 
-### 1. Prerequisites
+**Frontend**
+- HTML, CSS (TailwindCSS), JavaScript
+- Role-based views (User / Admin)
+- Chart.js for data visualization
 
-*   Python 3.8 or higher
-*   A MongoDB Atlas account (or a local MongoDB instance)
+**Backend**
+- FastAPI
+- JWT authentication (OAuth2 Bearer)
+- Modular architecture:
+  - Authentication
+  - ETL & ingestion
+  - Analysis logic
+  - API layer
 
-### 2. Installation
+**Database**
+- MongoDB Atlas
 
-1.  **Clone the repository** (or download the source code).
+**External APIs**
+- TwelveData
+- ApeWisdom
 
-2.  **Create a virtual environment**:
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-    ```
-
-3.  **Install dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-### 3. Configuration
-
-Create a `.env` file in the root directory with the following variables:
-
-```env
-MONGO_URL="mongodb+srv://<username>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority"
-DB_NAME="whatever"
-SECRET_KEY="your_super_secret_key_here"
-```
-
-*   Replace `<username>`, `<password>`, and `<cluster>` with your MongoDB Atlas credentials.
-*   Generate a strong `SECRET_KEY` (e.g., using `openssl rand -hex 32`).
-
-### 4. Running the Application
-
-Start the development server using Uvicorn:
+---
+## ⚙️ Setup Instructions
+### 1️⃣ Clone the repository
 
 ```bash
-uvicorn main:app --reload
+git clone <repository_url>
+cd <project_folder>
 ```
+### 2️⃣ Clone the repository
 
-The API will be available at `http://127.0.0.1:8000`.
+```bash
+pip install -r requirements.txt
+```
+### 3️⃣ Configure environment variables
+Create a `.env` file in the project root (see template below).
+```bash
+MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>/<database>
+DB_NAME=db_name
+SECRET_KEY=your_secret_key
 
-### 5. API Documentation
-
-Once the app is running, you can access the interactive API documentation at:
-
-*   **Swagger UI**: `http://127.0.0.1:8000/docs`
-*   **ReDoc**: `http://127.0.0.1:8000/redoc`
-
-## Usage
-
-1.  **Register**: POST to `/register` with a username and password.
-2.  **Login**: POST to `/token` (OAuth2 form) to get an access token.
-3.  **Access Protected Routes**: Use the token to access `/users/me` or `/system/status`. The Swagger UI handles the authorization header automatically if you use the "Authorize" button.
+TWELVEDATA_KEY=your_twelvedata_api_key
+```
+### 4️⃣ Run the application
+```bash
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+### 5️⃣ Access the application
+Service	URL: http://localhost:8000
